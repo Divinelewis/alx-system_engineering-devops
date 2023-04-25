@@ -3,6 +3,7 @@
 # print "Hello World"
 
 sudo apt-get update
-sudo apt-get -y install nginx
-echo 'Hello World!' > /var/www/html/index.html
-service nginx start
+sudo apt-get -y install nginxi
+sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
+sudo echo 'Hello World!' > /var/www/html/index.html
+sudo service nginx restart
