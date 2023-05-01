@@ -5,29 +5,10 @@ sudo apt-get -y update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
 sudo mkdir -p /var/www/html 
-sudo mkdir -p /var/www/error
-sudo chmod -R 755 /var/www
-echo 'Hello World!' > /var/www/html/index.html
-echo "Ceci n'est pas une page" > /var/www/html/404.html
-server_config=\
-"server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
-	root /var/www/html;
-	index index.html index.htm index.nginx-debian.html;
-	server_name _;
-	add_header X-Served-By \$hostname;
-	location / {
-		try_files \$uri \$uri/ =404;
-	}
-	if (\$request_filename ~ redirect_me){
-		rewrite ^ https://twitter.com/divinity_lewis permanent;
-	}
-	error_page 404 /404.html;
-	location = /404.html {
-		internal;
-	}
-}"
-
-echo "$server_config" > /etc/nginx/sites-enabled/default
+echo 'Hello World!' |sudo tee  /var/www/html/index.html
+echo "Ceci n'est pas une page" |sudo tee /var/www/html/404.html
+string_for_replacement="server_name _;\n\tadd_header X-Served-By \$hostname;\n\trewrite ^\/redirect_me https:\/\/www.divinelewis.tech permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+string_for_replacement="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
+sudo sed -i "s/listen 80 default_server;/$string_for_replacement/" /etc/nginx/sites-enabled/default
 sudo service nginx restart
