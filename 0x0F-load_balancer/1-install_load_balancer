@@ -4,18 +4,20 @@
 sudo apt-get -y update
 apt-get -y install haproxy
 
+DOMAIN_NAME='divinelewis.tech'
 # edit .config file
 server_config=\
 "
-frontend divinelewis.tech-frontend
-        bind *:80
-        mode http
-        default_backend divinelewis.tech-backend
-backend divinelewis.tech-backend
+backend $DOMAIN_NAME-backend
         balance roundrobin
         server 173867-web-01 52.91.145.188 check
         server 173867-web-02 100.25.137.235 check
+frontend $DOMAIN_NAME-frontend
+        bind *:80
+        mode http
+        default_backend $DOMAIN_NAME-backend
 "
+
 echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
 
 echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
