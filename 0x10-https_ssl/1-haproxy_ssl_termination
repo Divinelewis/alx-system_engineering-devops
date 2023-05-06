@@ -38,6 +38,9 @@ frontend  divinelewis.tech-frontend-http
         mode http
         http-request set-header X-Forwarded-Proto http
         default_backend divinelewis.tech-backend
+        acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+        redirect scheme https if !{ ssl_fc }
+        use_backend letsencrypt-backend if letsencrypt-acl
 
 frontend divinelewis.tech-frontend-https
         bind *:443 ssl crt /etc/haproxy/certs/www.divinelewis.tech.pem
@@ -48,4 +51,3 @@ backend divinelewis.tech-backend
         balance roundrobin
         server 173867-web-01 52.91.145.188 check
         server 173867-web-02 100.25.137.235 check
-
